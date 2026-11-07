@@ -1,0 +1,8 @@
+# Modernize checks are intentionally disabled for C++.
+# Experiment with modernize-* later.
+Checks: >
+  -*,
+  clang-diagnostic-*,
+  bugprone-*,
+  performance-*,
+  readability-*
