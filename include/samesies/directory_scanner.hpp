@@ -2,7 +2,7 @@
 
 #include <cstdint>
 #include <filesystem>
-#include <map>
+#include <unordered_map>
 #include <vector>
 
 using namespace std;
@@ -11,7 +11,7 @@ namespace fs = filesystem;
 /**
  * @brief Maps a file size in bytes to all file paths having exactly that size.
  */
-using file_size_group_t = map<uintmax_t, vector<fs::path>>;
+using file_size_group_t = unordered_map<uintmax_t, vector<fs::path>>;
 
 /**
  * @brief Recursively scans a directory and groups its regular files by size.
