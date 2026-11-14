@@ -28,4 +28,4 @@ using namespace std;
  * @return Updated 64-bit hash state after processing data. Returns
  *         intermediate_hash unchanged if data is empty.
  */
-uint64_t fnv1a_hash(uint64_t intermediate_hash, const vector<uint8_t> &data);
+uint64_t fnv1a_hash(uint64_t intermediate_hash, const vector<char> &data);

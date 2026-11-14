@@ -11,7 +11,7 @@ Test(fnv1a_hash, empty_input) {
 }
 
 Test(fnv1a_hash, single_byte) {
-  std::vector<uint8_t> data = {'a'};
+  std::vector<char> data = {'a'};
 
   uint64_t result = fnv1a_hash(FNV_OFFSET_BASIS_64, data);
 
@@ -19,7 +19,7 @@ Test(fnv1a_hash, single_byte) {
 }
 
 Test(fnv1a_hash, multiple_bytes) {
-  std::vector<uint8_t> data = {'a', 'b', 'c'};
+  std::vector<char> data = {'a', 'b', 'c'};
 
   uint64_t result = fnv1a_hash(FNV_OFFSET_BASIS_64, data);
 
@@ -27,8 +27,8 @@ Test(fnv1a_hash, multiple_bytes) {
 }
 
 Test(fnv1a_hash, incremental_hashing) {
-  std::vector<uint8_t> first = {'a', 'b'};
-  std::vector<uint8_t> second = {'c'};
+  std::vector<char> first = {'a', 'b'};
+  std::vector<char> second = {'c'};
 
   uint64_t intermediate = fnv1a_hash(FNV_OFFSET_BASIS_64, first);
 
@@ -38,7 +38,7 @@ Test(fnv1a_hash, incremental_hashing) {
 }
 
 Test(fnv1a_hash, zero_byte) {
-  std::vector<uint8_t> data = {0x00};
+  std::vector<char> data = {0x00};
 
   uint64_t result = fnv1a_hash(FNV_OFFSET_BASIS_64, data);
 
