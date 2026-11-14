@@ -1,0 +1,60 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build & Publish
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake pkg-config libcriterion-dev
+
+      - name: Check tag matches CMake version
+        run: |
+          cmake_version=$(grep -m1 -oP 'VERSION \K[0-9]+\.[0-9]+\.[0-9]+' CMakeLists.txt)
+          if [ "v${cmake_version}" != "${GITHUB_REF_NAME}" ]; then
+            echo "Tag ${GITHUB_REF_NAME} does not match CMake version v${cmake_version}"
+            exit 1
+          fi
+
+      - name: Test
+        run: |
+          cmake -S . -B build-test -DCMAKE_BUILD_TYPE=Debug
+          cmake --build build-test -- -j$(nproc)
+          ctest --test-dir build-test --output-on-failure
+
+      - name: Build release binary
+        run: |
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release \
+            -DSAMESIES_STATIC=ON -DSAMESIES_BUILD_TESTS=OFF
+          cmake --build build -- -j$(nproc)
+          strip build/samesies
+
+      - name: Package
+        run: |
+          name="samesies-${GITHUB_REF_NAME}-linux-x86_64"
+          mkdir "$name"
+          cp build/samesies README.md "$name/"
+          tar -czf "$name.tar.gz" "$name"
+          sha256sum "$name.tar.gz" > "$name.tar.gz.sha256"
+
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            --title "samesies $GITHUB_REF_NAME" \
+            --notes-file RELEASE_NOTES.md \
+            samesies-*.tar.gz samesies-*.tar.gz.sha256
